@@ -1,0 +1,36 @@
+version: '3.4'
+
+services:
+  
+  catalogdb :
+    container_name: catalogdb
+    restart: always  
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db 
+    #networks:
+    #  - node-webapp-network
+
+  #mongoclient :
+  #  container_name: mongoclient
+  #  restart: always
+  #  ports:
+  #    - "3000:3000"
+  #  depends_on:
+  #    - catalogdb
+
+
+  catalog.apis:
+    container_name: catalog.apis
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - "DatabaseSettings:ConnectionString=mongodb://catalogdb:27017"
+    depends_on:
+      - catalogdb
+    ports:
+      - "9000:80"
+
+#networks:
+#  node-webapp-network:
+#    driver: bridge
